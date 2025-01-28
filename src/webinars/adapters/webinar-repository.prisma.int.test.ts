@@ -84,11 +84,31 @@ describe('PrismaWebinarRepository', () => {
   describe('Scenario : repository.findById', () => {
     it('should find a webinar', async () => {
       // ARRANGE
+      const webinar = new Webinar({
+        id: 'webinar-id',
+        organizerId: 'organizer-id',
+        title: 'Webinar title',
+        startDate: new Date('2022-01-01T00:00:00Z'),
+        endDate: new Date('2022-01-01T01:00:00Z'),
+        seats: 100,
+      });
+
+      await prismaClient.webinar.create({
+        data: {
+          id: webinar.props.id,
+          organizerId: webinar.props.organizerId,
+          title: webinar.props.title,
+          startDate: webinar.props.startDate,
+          endDate: webinar.props.endDate,
+          seats: webinar.props.seats,
+        },
+      });
+
       // ACT
       const webinarResult = await repository.findById("webinar-id");
   
       // ASSERT
-      expect(webinarResult).toEqual({
+      expect(webinarResult?.props).toEqual({
         id: 'webinar-id',
         organizerId: 'organizer-id',
         title: 'Webinar title',
@@ -100,7 +120,7 @@ describe('PrismaWebinarRepository', () => {
   });
 
   describe('Scenario : repository.update', () => {
-    it('should create a webinar', async () => {
+    it('should update a webinar', async () => {
       // ARRANGE
       const webinar = new Webinar({
         id: 'webinar-id',
@@ -111,10 +131,21 @@ describe('PrismaWebinarRepository', () => {
         seats: 100,
       });
 
+      await prismaClient.webinar.create({
+        data: {
+          id: webinar.props.id,
+          organizerId: webinar.props.organizerId,
+          title: webinar.props.title,
+          startDate: webinar.props.startDate,
+          endDate: webinar.props.endDate,
+          seats: webinar.props.seats,
+        },
+      });
+
       const webinarToUpdate = new Webinar({
         id: 'webinar-id',
         organizerId: 'organizer-id',
-        title: 'Webinar title',
+        title: 'New webinar title',
         startDate: new Date('2022-01-01T00:00:00Z'),
         endDate: new Date('2022-01-01T01:00:00Z'),
         seats: 200,
@@ -130,7 +161,7 @@ describe('PrismaWebinarRepository', () => {
       expect(maybeWebinar).toEqual({
         id: 'webinar-id',
         organizerId: 'organizer-id',
-        title: 'Webinar title',
+        title: 'New webinar title',
         startDate: new Date('2022-01-01T00:00:00Z'),
         endDate: new Date('2022-01-01T01:00:00Z'),
         seats: 200,
